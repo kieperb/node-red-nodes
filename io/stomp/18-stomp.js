@@ -27,6 +27,8 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.server = n.server;
         this.topic = n.topic;
+        this.headers = n.headers;
+        console.log(n);
 
         this.serverConfig = RED.nodes.getNode(this.server);
         this.stompClientOpts = {
@@ -41,7 +43,7 @@ module.exports = function(RED) {
             }
         };
         if (this.serverConfig.vhost) {
-            this.stompClientOpts.vhost = this.serverConfig.vhost;
+          this.stompClientOpts.vhost = this.serverConfig.vhost;
         }
 
         var node = this;
@@ -49,7 +51,7 @@ module.exports = function(RED) {
         node.client = new StompClient(node.stompClientOpts);
 
         node.client.on("connect", function() {
-            node.status({fill:"green",shape:"dot",text:"connected"});
+          node.status({fill:"green",shape:"dot",text:"connected"});
         });
 
         node.client.on("reconnecting", function() {
@@ -58,14 +60,14 @@ module.exports = function(RED) {
         });
 
         node.client.on("error", function(error) {
-            node.status({fill:"grey",shape:"dot",text:"error"});
-            node.warn(error);
+            node.status({fill:"grey",shape:"dot",text:"error"});            
+			node.error(error, msg);
         });
 
         node.status({fill:"grey",shape:"ring",text:"connecting"});
         node.client.connect(function(sessionId) {
-            node.log('subscribing to: '+node.topic);
-            node.client.subscribe(node.topic, function(body, headers) {
+            node.log('subscribing to: '+node.topic+' with headers:' + JSON.stringify((node.headers)));
+            node.client.subscribe(node.topic, node.headers, function(body, headers) {
                 try {
                     msg.payload = JSON.parse(body);
                 }
@@ -110,14 +112,20 @@ module.exports = function(RED) {
             }
         };
         if (this.serverConfig.vhost) {
-            this.stompClientOpts.vhost = this.serverConfig.vhost;
+          this.stompClientOpts.vhost = this.serverConfig.vhost;
         }
 
         var node = this;
-        node.client = new StompClient(node.stompClientOpts);
+		var tmpmsg = {};
+		
+		node.client = new StompClient(node.stompClientOpts);
 
         node.client.on("connect", function() {
-            node.status({fill:"green",shape:"dot",text:"connected"});
+          node.status({fill:"green",shape:"dot",text:"connected"});
+        });
+		
+		node.client.on("connected", function() {
+          node.status({fill:"green",shape:"dot",text:"connected"});
         });
 
         node.client.on("reconnecting", function() {
@@ -127,18 +135,26 @@ module.exports = function(RED) {
 
         node.client.on("error", function(error) {
             node.status({fill:"grey",shape:"dot",text:"error"});
-            node.warn(error);
+			node.error(error, tmpmsg);
         });
 
         node.status({fill:"grey",shape:"ring",text:"connecting"});
-        node.client.connect(function(sessionId) {
+        node.client.connect(function(sessionId) {			
+			node.status({fill:"green",shape:"dot",text:"connected"});
         }, function(error) {
             node.status({fill:"grey",shape:"dot",text:"error"});
-            node.warn(error);
+			node.warn(error);			
         });
 
         node.on("input", function(msg) {
-            node.client.publish(node.topic || msg.topic, msg.payload, msg.headers);
+			tmpmsg = msg;
+			try {
+				node.status({fill:"green",shape:"dot",text:"connected"});
+				node.client.publish(node.topic || msg.topic, msg.payload, msg.headers);								
+			} catch (err) {
+				node.error("error on client publish, " + err, msg);	
+				node.status({fill:"grey",shape:"dot",text:"error"});
+			}
         });
 
         node.on("close", function(done) {
