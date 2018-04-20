@@ -116,15 +116,15 @@ module.exports = function(RED) {
         }
 
         var node = this;
-	var tmpmsg = {};
+	    var tmpmsg = {};
 		
-	node.client = new StompClient(node.stompClientOpts);
-
+	    node.client = new StompClient(node.stompClientOpts);
+    
         node.client.on("connect", function() {
             node.status({fill:"green",shape:"dot",text:"connected"});
         });
 		
-	node.client.on("connected", function() {
+	    node.client.on("connected", function() {
             node.status({fill:"green",shape:"dot",text:"connected"});
         });
 	    
@@ -135,7 +135,7 @@ module.exports = function(RED) {
 
         node.client.on("error", function(error) {
             node.status({fill:"grey",shape:"dot",text:"error"});
-	    node.error(error, tmpmsg);
+            node.error(error, tmpmsg);
         });
 
         node.status({fill:"grey",shape:"ring",text:"connecting"});
@@ -143,7 +143,7 @@ module.exports = function(RED) {
 	        node.status({fill:"green",shape:"dot",text:"connected"});
         }, function(error) {
             node.status({fill:"grey",shape:"dot",text:"error"});
-	        node.warn(error);			
+            node.warn(error);
         });
 
         node.on("input", function(msg) {
@@ -166,5 +166,5 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("stomp out",StompOutNode);
-	
+
 };
