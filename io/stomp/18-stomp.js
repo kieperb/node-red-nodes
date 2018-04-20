@@ -60,8 +60,8 @@ module.exports = function(RED) {
         });
 
         node.client.on("error", function(error) {
-            node.status({fill:"grey",shape:"dot",text:"error"});            
-	    node.error(error, msg);
+            node.status({fill:"grey",shape:"dot",text:"error"});
+            node.error(error, msg);
         });
 
         node.status({fill:"grey",shape:"ring",text:"connecting"});
