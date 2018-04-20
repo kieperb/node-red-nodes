@@ -140,10 +140,10 @@ module.exports = function(RED) {
 
         node.status({fill:"grey",shape:"ring",text:"connecting"});
         node.client.connect(function(sessionId) {			
-	    node.status({fill:"green",shape:"dot",text:"connected"});
+	        node.status({fill:"green",shape:"dot",text:"connected"});
         }, function(error) {
             node.status({fill:"grey",shape:"dot",text:"error"});
-	    node.warn(error);			
+	        node.warn(error);			
         });
 
         node.on("input", function(msg) {
