@@ -43,7 +43,7 @@ module.exports = function(RED) {
             }
         };
         if (this.serverConfig.vhost) {
-            this.stompClientOpts.vhost = this.serverConfig.vhost;
+          this.stompClientOpts.vhost = this.serverConfig.vhost;
         }
 
         var node = this;
@@ -81,7 +81,7 @@ module.exports = function(RED) {
         }, function(error) {
             node.status({fill:"grey",shape:"dot",text:"error"});
             node.warn(error);
-        });  
+        });
 
         node.on("close", function(done) {
             if (node.client) {
@@ -112,21 +112,22 @@ module.exports = function(RED) {
             }
         };
         if (this.serverConfig.vhost) {
-            this.stompClientOpts.vhost = this.serverConfig.vhost;
+          this.stompClientOpts.vhost = this.serverConfig.vhost;
         }
 
         var node = this;
-	    var tmpmsg = {};
+	var tmpmsg = {};
 		
-	    node.client = new StompClient(node.stompClientOpts);
+	node.client = new StompClient(node.stompClientOpts);
 
         node.client.on("connect", function() {
             node.status({fill:"green",shape:"dot",text:"connected"});
         });
 		
-	    node.client.on("connected", function() {
+	node.client.on("connected", function() {
             node.status({fill:"green",shape:"dot",text:"connected"});
         });
+	    
         node.client.on("reconnecting", function() {
             node.status({fill:"red",shape:"ring",text:"reconnecting"});
             node.warn("reconnecting");
@@ -134,26 +135,26 @@ module.exports = function(RED) {
 
         node.client.on("error", function(error) {
             node.status({fill:"grey",shape:"dot",text:"error"});
-	        node.error(error, tmpmsg);
+	    node.error(error, tmpmsg);
         });
 
         node.status({fill:"grey",shape:"ring",text:"connecting"});
         node.client.connect(function(sessionId) {			
-	        node.status({fill:"green",shape:"dot",text:"connected"});
+	    node.status({fill:"green",shape:"dot",text:"connected"});
         }, function(error) {
             node.status({fill:"grey",shape:"dot",text:"error"});
-	        node.warn(error);			
+	    node.warn(error);			
         });
 
         node.on("input", function(msg) {
-	        tmpmsg = msg;
-	        try {
-	            node.status({fill:"green",shape:"dot",text:"connected"});
-		        node.client.publish(node.topic || msg.topic, msg.payload, msg.headers);								
-	        } catch (err) {
-		        node.error("error on client publish, " + err, msg);	
-		        node.status({fill:"grey",shape:"dot",text:"error"});
-	        }
+	    tmpmsg = msg;
+	    try {
+	        node.status({fill:"green",shape:"dot",text:"connected"});
+	        node.client.publish(node.topic || msg.topic, msg.payload, msg.headers);								
+	    } catch (err) {
+	        node.error("error on client publish, " + err, msg);	
+	        node.status({fill:"grey",shape:"dot",text:"error"});
+	    }
         });
 
         node.on("close", function(done) {
