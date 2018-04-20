@@ -119,7 +119,7 @@ module.exports = function(RED) {
         var tmpmsg = {};
 		
         node.client = new StompClient(node.stompClientOpts);
-    
+
         node.client.on("connect", function() {
             node.status({fill:"green",shape:"dot",text:"connected"});
         });
