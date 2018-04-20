@@ -43,7 +43,7 @@ module.exports = function(RED) {
             }
         };
         if (this.serverConfig.vhost) {
-          this.stompClientOpts.vhost = this.serverConfig.vhost;
+            this.stompClientOpts.vhost = this.serverConfig.vhost;
         }
 
         var node = this;
@@ -61,7 +61,7 @@ module.exports = function(RED) {
 
         node.client.on("error", function(error) {
             node.status({fill:"grey",shape:"dot",text:"error"});            
-			node.error(error, msg);
+	    node.error(error, msg);
         });
 
         node.status({fill:"grey",shape:"ring",text:"connecting"});
@@ -112,7 +112,7 @@ module.exports = function(RED) {
             }
         };
         if (this.serverConfig.vhost) {
-          this.stompClientOpts.vhost = this.serverConfig.vhost;
+            this.stompClientOpts.vhost = this.serverConfig.vhost;
         }
 
         var node = this;
@@ -166,4 +166,5 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("stomp out",StompOutNode);
+	
 };
